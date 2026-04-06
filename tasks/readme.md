@@ -38,37 +38,43 @@ abort-task() {
 }
 
 # 提交並結算任務
+# 提交並結算任務
 commit-task() {
-    # 1. 取得當前分支名稱
-    local branch_name=$(git rev-parse --abbrev-ref HEAD)
-    if [ "$branch_name" = "main" ]; then
-        echo "⚠️ 錯誤：你正在 main 分支，請在任務分支執行。"
-        return 1
-    fi
-    echo "🔍 步驟 1: 列出所有修改過的檔案..."
-    git status --short
-    echo "🧪 步驟 2: 執行測試 (npm test)..."
-    # 這裡可以根據你的專案換成 pytest, go test 等
-    if npm test; then
-        echo "✅ 測試通過！"
-    else
-        echo "❌ 測試失敗！請修正後再提交，或執行 abort-task 放棄。"
-        return 1
-    fi
-    # 3. 提示輸入 Commit Message
-    echo "📝 請輸入 Commit 訊息 (例如: 實作影片處理器):"
-    read commit_msg
-    if [ -z "$commit_msg" ]; then
+    local branch_name
+    branch_name=$(_assert_on_task_branch) || return 1
 
-        commit_msg="Complete $branch_name"
+    local commit_msg="${1:-Complete $branch_name}"
 
-    fi
+    echo "🔍 修改的檔案："
+    git status --short
 
-    # 4. 執行提交
-    git add .
-    git commit -m "$commit_msg"
-    echo "🎉 任務 '$branch_name' 已成功本地提交！"
-    echo "💡 提示：現在你可以執行 'git push' 或合併回 main。"
+    if git diff-index --quiet HEAD -- && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+        echo "⚠️  沒有任何變更可以提交。"
+        return 1
+    fi
+
+    if [ -f "package.json" ]; then
+        echo "🧪 執行測試 (npm test)..."
+        if npm test; then
+            echo "✅ 測試通過！"
+        else
+            echo "❌ 測試失敗！請修正後再提交，或執行 abort-task 放棄。"
+            return 1
+        fi
+    fi
+
+    git add .
+    git commit -m "$commit_msg" || return 1
+
+    echo "🚀 推送至遠端..."
+    git push -u origin "$branch_name" || return 1
+
+    echo ""
+    echo "🎉 任務 [$branch_name] 已提交並推送！"
+    echo "   訊息: $commit_msg"
+    echo "   PR: https://github.com/$(git remote get-url origin | sed 's/.*github.com[:/]//;s/\.git$//')/pull/new/$branch_name"
+
+    unset CURRENT_TASK
 }
 ```
 ### .bashrc 檔案 寫 function
