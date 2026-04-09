@@ -1,14 +1,31 @@
 import { useState } from 'react'
+import { Menu } from 'lucide-react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
+import { Sidebar } from './components/layout/Sidebar'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <>
+    <div style={{ display: 'flex', height: '100vh' }}>
+      <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        {/* Mobile top bar */}
+        <header className="flex items-center gap-3 bg-[#1E1B3A] px-4 py-3 lg:hidden">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="rounded-lg p-1.5 text-[#AFA9EC] hover:bg-[#2A2550]"
+            aria-label="Open menu"
+          >
+            <Menu size={20} />
+          </button>
+          <span className="text-sm font-bold text-white">ApexDashboard</span>
+        </header>
       <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
@@ -114,8 +131,10 @@ function App() {
 
       <div className="ticks"></div>
       <section id="spacer"></section>
-    </>
+      </div>
+    </div>
   )
 }
+
 
 export default App
