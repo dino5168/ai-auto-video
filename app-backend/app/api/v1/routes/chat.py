@@ -1,6 +1,8 @@
 import json
 from collections.abc import AsyncIterator
+from pathlib import Path
 
+import httpx
 import ollama
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -11,6 +13,10 @@ from app.core.config import settings
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 _client = ollama.AsyncClient(host=settings.OLLAMA_HOST)
+
+_system_prompt: str | None = None
+if settings.SYSTEM_PROMPT:
+    _system_prompt = Path(settings.SYSTEM_PROMPT).read_text(encoding="utf-8")
 
 
 class ChatMessage(BaseModel):
@@ -27,16 +33,27 @@ class ChatResponse(BaseModel):
     content: str
 
 
+def _build_messages(req: ChatRequest) -> list[dict]:
+    messages = [m.model_dump() for m in req.messages]
+    if _system_prompt:
+        messages = [{"role": "system", "content": _system_prompt}] + messages
+    return messages
+
+
 @router.post("", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     try:
         response = await _client.chat(
             model=settings.OLLAMA_MODEL,
-            messages=[m.model_dump() for m in req.messages],
+            messages=_build_messages(req),
         )
         return ChatResponse(content=response.message.content)
+    except ollama.ResponseError as e:
+        raise HTTPException(status_code=e.status_code, detail=e.error) from e
+    except httpx.ConnectError as e:
+        raise HTTPException(status_code=502, detail="Ollama service unavailable") from e
     except Exception as e:
-        raise HTTPException(status_code=502, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/stream")
@@ -47,7 +64,7 @@ async def chat_stream(req: ChatRequest):
         try:
             async for chunk in await _client.chat(
                 model=settings.OLLAMA_MODEL,
-                messages=[m.model_dump() for m in req.messages],
+                messages=_build_messages(req),
                 stream=True,
             ):
                 content = chunk.message.content

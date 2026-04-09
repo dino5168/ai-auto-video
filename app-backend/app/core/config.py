@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     # Ollama
     OLLAMA_HOST: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "gemma4:e2b"
+    SYSTEM_PROMPT: str | None = None
 
     # Database
     POSTGRES_HOST: str
