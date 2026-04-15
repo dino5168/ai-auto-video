@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "app-backend/Prompts/System.md",
+                "file": "tasks/task-04-15/task-add-ai-excute-command.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "System"
+              "title": "task-add-ai-excute-command"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "app-backend/Prompts/System.md",
+                "file": "tasks/task-04-15/task-add-ai-excute-command.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "System 的反向連結"
+              "title": "task-add-ai-excute-command 的反向連結"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "app-backend/Prompts/System.md",
+                "file": "tasks/task-04-15/task-add-ai-excute-command.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "System 的對外連結"
+              "title": "task-add-ai-excute-command 的對外連結"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "app-backend/Prompts/System.md",
+                "file": "tasks/task-04-15/task-add-ai-excute-command.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "System 的大綱"
+              "title": "task-add-ai-excute-command 的大綱"
             }
           }
         ]
@@ -185,8 +185,23 @@
   },
   "active": "af2555f7c2839297",
   "lastOpenFiles": [
-    "app-backend/Prompts/System-2.md",
+    "log/2026-04-15.md",
+    "app-backend/app/tools/__pycache__/doc_markdown.cpython-312.pyc",
+    "app-backend/app/tools/__pycache__/__init__.cpython-312.pyc",
+    "app-backend/app/tools/__pycache__",
+    "app-backend/docs/command-use-example.md",
+    "app-backend/system-env/tools.json",
+    "app-backend/system-env",
+    "app-backend/新增資料夾",
+    "app-backend/docs/chat-py.md",
+    "tasks/task-04-15/task-add-ai-excute-command.md",
+    "app-backend/docs",
     "app-backend/Prompts/System.md",
+    "tasks/task-04-15",
+    "tasks/task-write-markdown.md",
+    "app-backend/app/tools/doc_markdown.py",
+    "app-backend/app/tools/__init__.py",
+    "app-backend/Prompts/System-2.md",
     "CLAUDE.md",
     "backend-setup.md",
     "tasks/task-start.md",

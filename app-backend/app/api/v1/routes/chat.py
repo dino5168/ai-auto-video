@@ -19,6 +19,12 @@ _system_prompt: str | None = None
 if settings.SYSTEM_PROMPT:
     _system_prompt = Path(settings.SYSTEM_PROMPT).read_text(encoding="utf-8")
 
+# 載入工具指令定義
+_tool_commands: set[str] = set()
+if settings.SYSTEM_TOOLS:
+    _tools_data = json.loads(Path(settings.SYSTEM_TOOLS).read_text(encoding="utf-8"))
+    _tool_commands = {t["command"] for t in _tools_data.get("tools", [])}
+
 
 class ChatMessage(BaseModel):
     role: str
@@ -41,10 +47,27 @@ def _build_messages(req: ChatRequest) -> list[dict]:
     return messages
 
 
+def _detect_clear(messages: list[dict]) -> bool:
+    """最後一則 user 訊息是否為 /clear 指令。"""
+    user_msgs = [m for m in messages if m["role"] == "user"]
+    if not user_msgs:
+        return False
+    return user_msgs[-1]["content"].strip() == "/clear"
+
+
+def _system_only(messages: list[dict]) -> list[dict]:
+    """只保留 system prompt，清除其餘訊息。"""
+    return [m for m in messages if m["role"] == "system"]
+
+
 @router.post("", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     try:
         messages = _build_messages(req)
+
+        if _detect_clear(messages):
+            return ChatResponse(content="對話已清除。")
+
         response = await _client.chat(
             model=settings.OLLAMA_MODEL,
             messages=messages,
@@ -66,6 +89,12 @@ async def chat_stream(req: ChatRequest):
 
     async def event_generator() -> AsyncIterator[str]:
         messages = _build_messages(req)
+
+        if _detect_clear(messages):
+            yield f"data: {json.dumps({'content': '對話已清除。'})}\n\n"
+            yield "data: [DONE]\n\n"
+            return
+
         collected: list[str] = []
         try:
             async for chunk in await _client.chat(

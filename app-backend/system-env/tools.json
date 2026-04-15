@@ -1,0 +1,9 @@
+{
+  "tools": [
+    {
+      "command": "/clear",
+      "description": "清除對話歷史，保留系統提示詞",
+      "action": "clear_messages"
+    }
+  ]
+}
