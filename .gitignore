@@ -29,7 +29,8 @@ log/
 
 # Obsidian
 tasks/.obsidian/
-
+.obsidian/
 # OS
 .DS_Store
 Thumbs.db
+

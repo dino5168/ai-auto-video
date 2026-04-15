@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.core.config import settings
+from app.tools.doc_markdown import save_markdown
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -43,11 +44,14 @@ def _build_messages(req: ChatRequest) -> list[dict]:
 @router.post("", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     try:
+        messages = _build_messages(req)
         response = await _client.chat(
             model=settings.OLLAMA_MODEL,
-            messages=_build_messages(req),
+            messages=messages,
         )
-        return ChatResponse(content=response.message.content)
+        reply = response.message.content
+        save_markdown(messages, reply)
+        return ChatResponse(content=reply)
     except ollama.ResponseError as e:
         raise HTTPException(status_code=e.status_code, detail=e.error) from e
     except httpx.ConnectError as e:
@@ -61,18 +65,24 @@ async def chat_stream(req: ChatRequest):
     """Stream Ollama replies as server-sent events."""
 
     async def event_generator() -> AsyncIterator[str]:
+        messages = _build_messages(req)
+        collected: list[str] = []
         try:
             async for chunk in await _client.chat(
                 model=settings.OLLAMA_MODEL,
-                messages=_build_messages(req),
+                messages=messages,
                 stream=True,
             ):
                 content = chunk.message.content
                 if content:
+                    collected.append(content)
                     yield f"data: {json.dumps({'content': content})}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
         finally:
+            if collected:
+                # Save full assembled reply after stream completes
+                save_markdown(messages, "".join(collected))
             yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
