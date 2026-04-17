@@ -18,7 +18,7 @@ _NAV_GROUPS: list[NavGroupSchema] = [
                     {"label": "Reports", "href": "/dashboard/reports", "icon": "TrendingUp"},
                 ],
             },
-            {"label": "Analytics", "href": "/analytics", "icon": "BarChart2"},
+            {"label": "數據分析", "href": "/analytics", "icon": "BarChart2"},
             {"label": "eCommerce", "href": "/ecommerce", "icon": "ShoppingBag"},
             {"label": "CRM", "href": "/crm", "icon": "Users2"},
             {"label": "SaaS", "href": "/saas", "icon": "Cloud"},

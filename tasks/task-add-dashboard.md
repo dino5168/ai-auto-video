@@ -10,7 +10,7 @@
 
 ### Layout-Sider-Bar 
 
-![Dashboard](/asserts/Layout-Sider-Bar.png)
+![Dashboard](/tasks/asserts/Layout-Sider-Bar.png)
 
 技術棧：React + TypeScript + shadcn/ui + Tailwind CSS
 檔案位置：src/components/layout/Sidebar.tsx
