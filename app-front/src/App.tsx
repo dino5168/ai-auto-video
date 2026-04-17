@@ -34,7 +34,7 @@ function App() {
     setMessages([...history, assistantMsg])
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/v1/chat/stream', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history }),

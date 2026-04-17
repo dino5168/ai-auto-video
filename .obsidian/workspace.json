@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "doc/prompt-engineer/Result/02/Fact Check.md",
+                "file": "tasks/task-04-17/move-menu-to-backend.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Fact Check"
+              "title": "move-menu-to-backend"
             }
           }
         ]
@@ -183,8 +183,22 @@
       "bases:建立新的 base": false
     }
   },
-  "active": "af2555f7c2839297",
+  "active": "d30bc1a41bb6cc08",
   "lastOpenFiles": [
+    "app-front/src/hooks/useNavGroups.ts",
+    "app-front/src/hooks",
+    "app-backend/app/schemas/__pycache__/menu.cpython-312.pyc",
+    "app-backend/app/api/v1/routes/__pycache__/menu.cpython-312.pyc",
+    "app-backend/app/schemas/menu.py",
+    "app-backend/app/api/v1/routes/menu.py",
+    "tasks/task-04-17/setup-env.md",
+    "tasks/task-04-17/move-menu-to-backend.md",
+    "ROLE-en.md",
+    "tasks/task-04-17",
+    "CLAUDE.md",
+    "ROLE.md",
+    "tasks/asserts/Layout-Sider-Bar.png",
+    "doc/prompt-engineer/Result/02/Fact Check.md",
     "doc/prompt-engineer/Result/02/Critique & Revise.md",
     "doc/prompt-engineer/Result/02/Calibrated Uncertainty.md",
     "doc/prompt-engineer/Result/01/Style Transfer.md",
@@ -204,22 +218,9 @@
     "doc/prompt-engineer/docs/prompt-design-paradigms.md",
     "doc/prompt-engineer/docs/feynman_learning_prompt.md",
     "doc/prompt-engineer/System/Role/Prompt Engineer.md",
-    "doc/prompt-engineer/System/Role/Harness Enginerr.md",
-    "doc/prompt-engineer/System/Role/Context Engineer.md",
     "doc/prompt-engineer/System/Role",
     "doc/prompt-engineer/System",
-    "doc/prompt-engineer/Result/05/Flipped Interaction.md",
-    "doc/prompt-engineer/Result/04/RAG.md",
-    "doc/prompt-engineer/Result/04/Prompt Chaining.md",
-    "doc/prompt-engineer/Result/04/Memory.md",
-    "doc/prompt-engineer/Result/04/log.md",
     "doc/prompt-engineer/Result/05",
-    "doc/prompt-engineer/Result/04",
-    "doc/prompt-engineer/Result/03",
-    "doc/prompt-engineer/Result/02",
-    "doc/prompt-engineer/Result/01",
-    "doc/prompt-engineer/Result",
-    "doc/prompt-engineer/Output",
-    "doc/prompt-engineer/docs"
+    "doc/prompt-engineer/Result/04"
   ]
 }

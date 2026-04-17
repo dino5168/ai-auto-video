@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronDown, MoreHorizontal } from 'lucide-react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import {
@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
-import { navGroups } from './nav-config'
 import { NavItem } from './NavItem'
+import { useNavGroups } from '@/hooks/useNavGroups'
 
 // ─── Shared inner content ────────────────────────────────────────────────────
 
@@ -19,6 +19,9 @@ interface SidebarContentProps {
   onCollapse?: () => void
   openGroups: Record<string, boolean>
   onToggleGroup: (title: string) => void
+  navGroups: ReturnType<typeof useNavGroups>['navGroups']
+  loading: boolean
+  error: string | null
 }
 
 function SidebarContent({
@@ -26,6 +29,9 @@ function SidebarContent({
   onCollapse,
   openGroups,
   onToggleGroup,
+  navGroups,
+  loading,
+  error,
 }: SidebarContentProps) {
   return (
     <div className="flex h-full flex-col bg-[#1E1B3A]">
@@ -46,7 +52,13 @@ function SidebarContent({
 
       {/* Nav tree */}
       <nav className="flex-1 overflow-y-auto py-2">
-        {navGroups.map((group) => {
+        {loading && (
+          <p className="px-4 py-3 text-xs text-[#534AB7]">Loading…</p>
+        )}
+        {error && (
+          <p className="px-4 py-3 text-xs text-red-400">{error}</p>
+        )}
+        {!loading && !error && navGroups.map((group) => {
           const isOpen = openGroups[group.title]
           return (
             <div key={group.title} className="mb-1">
@@ -147,11 +159,17 @@ interface SidebarProps {
 
 export function Sidebar({ mobileOpen = false, onMobileClose, className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(navGroups.map((g) => [g.title, true])),
-  )
+  const { navGroups, loading, error } = useNavGroups()
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
   const toggleGroup = (title: string) =>
     setOpenGroups((prev) => ({ ...prev, [title]: !prev[title] }))
+
+  // Initialise all groups as open once data arrives
+  useEffect(() => {
+    if (navGroups.length > 0) {
+      setOpenGroups(Object.fromEntries(navGroups.map((g) => [g.title, true])))
+    }
+  }, [navGroups])
 
   return (
     <TooltipProvider>
@@ -168,6 +186,9 @@ export function Sidebar({ mobileOpen = false, onMobileClose, className }: Sideba
           onCollapse={() => setCollapsed((c) => !c)}
           openGroups={openGroups}
           onToggleGroup={toggleGroup}
+          navGroups={navGroups}
+          loading={loading}
+          error={error}
         />
       </aside>
 
@@ -181,6 +202,9 @@ export function Sidebar({ mobileOpen = false, onMobileClose, className }: Sideba
             collapsed={false}
             openGroups={openGroups}
             onToggleGroup={toggleGroup}
+            navGroups={navGroups}
+            loading={loading}
+            error={error}
           />
         </SheetContent>
       </Sheet>

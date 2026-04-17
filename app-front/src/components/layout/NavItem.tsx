@@ -37,11 +37,6 @@ export function NavItem({ item, collapsed, depth = 0 }: NavItemProps) {
       {!collapsed && (
         <>
           <span className="flex-1 text-sm font-medium">{item.label}</span>
-          {item.badge !== undefined && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#7F77DD] px-1 text-xs font-semibold text-white">
-              {item.badge}
-            </span>
-          )}
         </>
       )}
     </Link>
@@ -65,11 +60,6 @@ export function NavItem({ item, collapsed, depth = 0 }: NavItemProps) {
       {!collapsed && (
         <>
           <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
-          {item.badge !== undefined && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#7F77DD] px-1 text-xs font-semibold text-white">
-              {item.badge}
-            </span>
-          )}
           <ChevronRight
             size={14}
             className={cn(
@@ -91,9 +81,6 @@ export function NavItem({ item, collapsed, depth = 0 }: NavItemProps) {
         <TooltipTrigger asChild>{rowContent}</TooltipTrigger>
         <TooltipContent side="right">
           <span>{item.label}</span>
-          {item.badge !== undefined && (
-            <span className="ml-1 text-xs">({item.badge})</span>
-          )}
         </TooltipContent>
       </Tooltip>
     ) : (
