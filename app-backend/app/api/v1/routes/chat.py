@@ -55,11 +55,6 @@ def _detect_clear(messages: list[dict]) -> bool:
     return user_msgs[-1]["content"].strip() == "/clear"
 
 
-def _system_only(messages: list[dict]) -> list[dict]:
-    """只保留 system prompt，清除其餘訊息。"""
-    return [m for m in messages if m["role"] == "system"]
-
-
 @router.post("", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     try:

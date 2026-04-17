@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "tasks/task-04-09/optimization.md",
+                "file": "app-backend/README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "optimization"
+              "title": "README"
             }
           }
         ]
@@ -185,12 +185,16 @@
   },
   "active": "c13df05a420e193b",
   "lastOpenFiles": [
+    "tasks/task-04-17/check-tools.md",
+    "README.md",
+    "tasks/task-04-17/add-web-fetch.md",
+    "CLAUDE.md",
+    "tasks/task-04-09/optimization.md",
     "tasks/task-04-09/add-system-prompt.md",
     "tasks/asserts/table-design.png",
     "tasks/asserts/Layout-Sider-Bar.png",
     "tasks/task-04-17/setup-env.md",
     "tasks/task-04-17/add-analytics-page.md",
-    "CLAUDE.md",
     "logs/CLAUDE.md",
     "logs/CLAUDE_0417.md",
     "CLAUDE_0417.md",
@@ -215,12 +219,9 @@
     "tasks/task-rollback.md",
     "tasks/task-fist-git.md",
     "tasks/task-connect-model.md",
-    "tasks/task-04-09/optimization.md",
     "tasks/task-04-15/task-add-ai-excute-command.md",
     "ROLE.md",
     "doc/prompt-engineer/Result/02/Fact Check.md",
-    "doc/prompt-engineer/Result/02/Critique & Revise.md",
-    "doc/prompt-engineer/Result/02/Calibrated Uncertainty.md",
-    "doc/prompt-engineer/Result/01/Style Transfer.md"
+    "doc/prompt-engineer/Result/02/Critique & Revise.md"
   ]
 }

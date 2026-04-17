@@ -81,6 +81,12 @@ function App() {
     } finally {
       setStreaming(false)
       textareaRef.current?.focus()
+      // /clear 指令：後端確認後清空前端 messages
+      setMessages(prev => {
+        const last = prev[prev.length - 1]
+        if (last?.role === 'assistant' && last.content === '對話已清除。') return []
+        return prev
+      })
     }
   }
 
