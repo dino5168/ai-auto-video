@@ -78,55 +78,6 @@ POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=<password>
 POSTGRES_DB=<dbname>
-OLLAMA_HOST=http://localhost:11434
-OLLAMA_MODEL=gemma4:e2b
-SYSTEM_PROMPT=D:\repo-project\ai-auto-video\app-backend\system-env\system-prompt.md
-SYSTEM_TOOLS=D:\repo-project\ai-auto-video\app-backend\system-env\tools.json
-```
-
-### Tool Command Dispatch
-
-前端輸入 `/[command]` 時，後端透過以下機制處理，**不呼叫 Ollama**：
-
-```
-user input "/webfetch https://..."
-  └─ _dispatch_command()
-       ├─ split(" ", 1) → cmd="/webfetch", args="https://..."
-       ├─ _tool_registry[cmd] → action="web_fetch"        # 來自 tools.json
-       └─ _ACTION_HANDLERS[action](args) → 回傳結果
-```
-
-**新增指令步驟：**
-1. `system-env/tools.json` 加入 `{"command": "/xxx", "action": "do_xxx"}`
-2. `chat.py` 的 `_ACTION_HANDLERS` 加入 `"do_xxx": _handle_xxx`
-3. 實作 `async def _handle_xxx(args: str) -> str`
-
-**現有指令：**
-| Command | Action | 說明 |
-|---------|--------|------|
-| `/clear` | `clear_messages` | 清除對話歷史（前端清空 messages state） |
-| `/webfetch [url]` | `web_fetch` | 抓取 URL 內容（前 3000 字元）送給 Ollama |
-
-**前端 `/clear` 處理：** `App.tsx` `finally` 區塊偵測 assistant 回應為 `"對話已清除。"` 時執行 `setMessages([])`。
-
-### Project Structure
-```
-app-backend/
-├── app/
-│   ├── api/v1/routes/
-│   ├── core/
-│   ├── models/
-│   ├── schemas/
-│   ├── tools/
-│   │   └── doc_markdown.py   # 儲存對話記錄為 Markdown
-│   └── main.py
-├── system-env/
-│   ├── tools.json            # Tool command 定義（command → action）
-│   └── system-prompt.md      # System prompt 檔案（路徑由 .env 指定）
-├── alembic/
-├── alembic.ini
-├── .env
-└── pyproject.toml
 ```
 
 ### API Endpoints

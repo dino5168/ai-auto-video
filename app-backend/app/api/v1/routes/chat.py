@@ -1,5 +1,5 @@
 import json
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from pathlib import Path
 
 import httpx
@@ -19,11 +19,36 @@ _system_prompt: str | None = None
 if settings.SYSTEM_PROMPT:
     _system_prompt = Path(settings.SYSTEM_PROMPT).read_text(encoding="utf-8")
 
-# 載入工具指令定義
-_tool_commands: set[str] = set()
+# 載入工具指令定義：command → action
+_tool_registry: dict[str, str] = {}
 if settings.SYSTEM_TOOLS:
     _tools_data = json.loads(Path(settings.SYSTEM_TOOLS).read_text(encoding="utf-8"))
-    _tool_commands = {t["command"] for t in _tools_data.get("tools", [])}
+    _tool_registry = {t["command"]: t["action"] for t in _tools_data.get("tools", [])}
+
+async def _handle_clear(args: str) -> str:  # noqa: ARG001
+    return "對話已清除。"
+
+
+async def _handle_web_fetch(args: str) -> str:
+    url = args.strip()
+    if not url:
+        return "請提供 URL，例如：/webfetch https://example.com"
+    try:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=10) as client:
+            resp = await client.get(url)
+            resp.raise_for_status()
+            # 截斷避免超出 context 限制
+            return resp.text[:3000]
+    except httpx.HTTPStatusError as e:
+        return f"HTTP 錯誤 {e.response.status_code}：{url}"
+    except httpx.RequestError as e:
+        return f"無法連線：{e}"
+
+
+_ACTION_HANDLERS: dict[str, Callable[[str], Awaitable[str]]] = {
+    "clear_messages": _handle_clear,
+    "web_fetch": _handle_web_fetch,
+}
 
 
 class ChatMessage(BaseModel):
@@ -47,12 +72,18 @@ def _build_messages(req: ChatRequest) -> list[dict]:
     return messages
 
 
-def _detect_clear(messages: list[dict]) -> bool:
-    """最後一則 user 訊息是否為 /clear 指令。"""
+async def _dispatch_command(messages: list[dict]) -> str | None:
+    """若最後一則 user 訊息符合 tool_registry 指令，執行對應 handler 並回傳結果，否則回傳 None。"""
     user_msgs = [m for m in messages if m["role"] == "user"]
     if not user_msgs:
-        return False
-    return user_msgs[-1]["content"].strip() == "/clear"
+        return None
+    parts = user_msgs[-1]["content"].strip().split(" ", 1)
+    cmd, args = parts[0], parts[1] if len(parts) > 1 else ""
+    action = _tool_registry.get(cmd)
+    if not action:
+        return None
+    handler = _ACTION_HANDLERS.get(action)
+    return await handler(args) if handler else None
 
 
 @router.post("", response_model=ChatResponse)
@@ -60,8 +91,9 @@ async def chat(req: ChatRequest):
     try:
         messages = _build_messages(req)
 
-        if _detect_clear(messages):
-            return ChatResponse(content="對話已清除。")
+        result = await _dispatch_command(messages)
+        if result:
+            return ChatResponse(content=result)
 
         response = await _client.chat(
             model=settings.OLLAMA_MODEL,
@@ -85,8 +117,9 @@ async def chat_stream(req: ChatRequest):
     async def event_generator() -> AsyncIterator[str]:
         messages = _build_messages(req)
 
-        if _detect_clear(messages):
-            yield f"data: {json.dumps({'content': '對話已清除。'})}\n\n"
+        result = await _dispatch_command(messages)
+        if result:
+            yield f"data: {json.dumps({'content': result})}\n\n"
             yield "data: [DONE]\n\n"
             return
 

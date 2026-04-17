@@ -4,6 +4,11 @@
       "command": "/clear",
       "description": "清除對話歷史，保留系統提示詞",
       "action": "clear_messages"
+    },
+    {
+      "command": "/webfetch",
+      "description": "抓取指定 URL 的網頁內容",
+      "action": "web_fetch"
     }
   ]
 }
