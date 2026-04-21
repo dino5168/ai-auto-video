@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { Menu, Send, Bot, User } from 'lucide-react'
 import { Sidebar } from './components/layout/Sidebar'
 import { AnalyticsPage } from './pages/AnalyticsPage'
+import { Demo3dModelPage } from './pages/demo3dmodelPage'
 import './App.css'
 
 interface Message {
@@ -117,6 +118,7 @@ function App() {
       <section id="center" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: '#12102A' }}>
         <Routes>
           <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/demo3dmodel" element={<Demo3dModelPage />} />
           <Route path="*" element={
             <>
               {/* Messages */}
